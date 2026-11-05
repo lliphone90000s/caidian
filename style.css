@@ -820,3 +820,12 @@ a.rating-badge:hover { text-decoration: underline; }
 #refresh-progress-fill { height: 100%; width: 0%; background: var(--red); border-radius: 2px; transition: width .2s ease; }
 
 .hidden { display: none !important; }
+
+/* IG / THREADS / MAP buttons */
+.card-links { display:grid; grid-template-columns:repeat(3,1fr); gap:6px; margin-top:10px; }
+.card-link-btn { display:flex; align-items:center; justify-content:center; padding:7px 0; border-radius:8px; font-size:12px; font-weight:700; letter-spacing:.04em; text-decoration:none; color:#fff; background:#555; cursor:pointer; transition:opacity .15s; }
+.card-link-btn:hover { opacity:.85; }
+.card-link-btn.is-ig { background:linear-gradient(45deg,#f58529,#dd2a7b,#8134af); }
+.card-link-btn.is-threads { background:#111; }
+.card-link-btn.is-map { background:#1a73e8; }
+.card-link-btn.is-disabled { background:#e4e4e4; color:#aaa; cursor:not-allowed; pointer-events:none; }

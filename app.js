@@ -166,6 +166,17 @@ function applyReadonlyChrome() {
   void emptyHint;
 }
 
+function linkButtonsHtml(cafe) {
+  const src = cafe.sourceUrl || '';
+  const ig = /instagram/i.test(src) ? src : '';
+  const th = /threads\.(com|net)/i.test(src) ? src : '';
+  const map = cafe.mapsUrl || (cafe.placeId ? `https://www.google.com/maps/place/?q=place_id:${encodeURIComponent(cafe.placeId)}` : '');
+  const btn = (label, url, cls) => url
+    ? `<a class="card-link-btn ${cls}" href="${esc(url)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">${label}</a>`
+    : `<span class="card-link-btn ${cls} is-disabled" aria-disabled="true" onclick="event.stopPropagation()">${label}</span>`;
+  return `<div class="card-links">${btn('IG', ig, 'is-ig')}${btn('THREADS', th, 'is-threads')}${btn('MAP', map, 'is-map')}</div>`;
+}
+
 function openPlaceLink(cafe) {
   // Priority: IG/Threads/source first, then Google Maps. Never open Notion.
   const maps = cafe.mapsUrl || (cafe.placeId ? `https://www.google.com/maps/place/?q=place_id:${cafe.placeId}` : '');
@@ -520,7 +531,7 @@ function openEditModal(id) {
   const cafe = (cafes.find(c => c.id === id) || allCafes.find(c => c.id === id));
   if (!cafe) return;
   if (READONLY) {
-    openPlaceLink(cafe);
+    // Card click no longer navigates; use IG / THREADS / MAP buttons.
     return;
   }
 
@@ -789,7 +800,7 @@ function renderCafes() {
     container.innerHTML = filtered.map(renderCard).join('');
   }
   container.querySelectorAll('[data-id]').forEach(el => {
-    el.addEventListener('click', () => openEditModal(el.dataset.id));
+    el.addEventListener('click', e => { if (e.target.closest('.card-links')) return; openEditModal(el.dataset.id); });
   });
   container.querySelectorAll('.fav-btn').forEach(btn => {
     btn.addEventListener('click', e => {
@@ -876,6 +887,7 @@ function renderCard(cafe) {
         ${locationHtml}
         ${ratingHtml}
         ${statusHtml}${costHtml}${footerHtml}
+        ${linkButtonsHtml(cafe)}
       </div>
     </div>`;
 }
@@ -930,7 +942,7 @@ function renderTimeline() {
   }
   content.innerHTML = html;
   content.querySelectorAll('[data-id]').forEach(el => {
-    el.addEventListener('click', () => openEditModal(el.dataset.id));
+    el.addEventListener('click', e => { if (e.target.closest('.card-links')) return; openEditModal(el.dataset.id); });
   });
 }
 
@@ -988,6 +1000,7 @@ function renderTimelineCard(v) {
         ${locationHtml}
         ${ratingHtml}
         ${costHtml}${footerHtml}
+        ${linkButtonsHtml(cafe)}
       </div>
     </div>`;
 }
