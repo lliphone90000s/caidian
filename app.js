@@ -887,8 +887,8 @@ function renderCard(cafe) {
         ${locationHtml}
         ${ratingHtml}
         ${statusHtml}${costHtml}${footerHtml}
-        ${linkButtonsHtml(cafe)}
       </div>
+      ${linkButtonsHtml(cafe)}
     </div>`;
 }
 
@@ -1000,8 +1000,8 @@ function renderTimelineCard(v) {
         ${locationHtml}
         ${ratingHtml}
         ${costHtml}${footerHtml}
-        ${linkButtonsHtml(cafe)}
       </div>
+      ${linkButtonsHtml(cafe)}
     </div>`;
 }
 
