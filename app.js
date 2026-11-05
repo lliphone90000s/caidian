@@ -74,7 +74,7 @@ async function cachePhoto(url) {
 }
 
 // ── State ──────────────────────────────────────────────────────────────────────
-const READONLY = true; // Notion / places.json static mode (no FastAPI)
+const READONLY = true; // places.json static mode (no FastAPI)
 let collections     = [];
 let activeCollectionId = localStorage.getItem('activeCollection') || 'default';
 let allCafes        = []; // full dump; cafes = current collection slice
@@ -158,7 +158,7 @@ function applyReadonlyChrome() {
   if (h1 && !document.getElementById('readonly-badge')) {
     const badge = document.createElement('span');
     badge.id = 'readonly-badge';
-    badge.textContent = 'Notion 唯讀';
+    badge.textContent = '本機匯出・唯讀';
     badge.style.cssText = 'margin-left:10px;font-size:.72rem;font-weight:600;color:#888;vertical-align:middle;border:1px solid #ddd;border-radius:999px;padding:2px 8px;';
     h1.appendChild(badge);
   }
@@ -167,9 +167,11 @@ function applyReadonlyChrome() {
 }
 
 function openPlaceLink(cafe) {
-  const url = cafe.mapsUrl || (cafe.placeId ? `https://www.google.com/maps/place/?q=place_id:${cafe.placeId}` : '') || cafe.sourceUrl || cafe.notionUrl || '';
+  // Priority: IG/Threads/source first, then Google Maps. Never open Notion.
+  const maps = cafe.mapsUrl || (cafe.placeId ? `https://www.google.com/maps/place/?q=place_id:${cafe.placeId}` : '');
+  const url = cafe.sourceUrl || maps || '';
   if (url) window.open(url, '_blank', 'noopener');
-  else alert('這個地點還沒有地圖或推薦連結');
+  else alert('這個地點還沒有推薦連結或地圖');
 }
 
 // Click backdrop to close, only if both press and release land on the empty backdrop
@@ -357,7 +359,7 @@ async function switchCollection(id) {
 }
 
 async function addCollection() {
-  if (READONLY) { alert('唯讀模式：請到 Notion「地點」新增分類／地點'); return; }
+  if (READONLY) { alert('唯讀模式：請更新本機踩點後再匯出'); return; }
   const name = prompt('新分類名稱（例如：日本旅遊、首爾踩點）：');
   if (!name?.trim()) return;
   const id = 'col_' + Date.now();
@@ -624,7 +626,7 @@ function renderVisitsList() {
 
 // ── Save / Delete ──────────────────────────────────────────────────────────────
 async function handleSaveCafe() {
-  if (READONLY) { alert('唯讀模式：資料請在 Notion 編輯'); return; }
+  if (READONLY) { alert('唯讀模式：請在本機踩點編輯後再匯出'); return; }
   const data = {
     type:      document.getElementById('field-type').value.trim(),
     city:      document.getElementById('field-city').value.trim(),
